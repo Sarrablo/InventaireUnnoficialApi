@@ -66,14 +66,16 @@ class InventaireApi:
             self.driver.implicitly_wait(1)
             try:
                 logged = self.driver.find_element(
-                    By.XPATH, '/html/body/div/main/div/div/div[2]/div[1]/div[1]/div[2]/h2')
+                    By.XPATH,
+                    '/html/body/div/main/div/div/div[2]/div[1]/div[1]/div[2]/h2'
+                )
                 self.logger.info("Login Success")
                 return True
             except NoSuchElementException:
                 pass
             try:
-                logged = self.driver.find_element(By.XPATH,
-                                                  '/html/body/div/main/div/div/form/div[3]/div/i')
+                logged = self.driver.find_element(
+                    By.XPATH, '/html/body/div/main/div/div/form/div[3]/div/i')
                 self.logger.info("Login Failed")
                 return False
             except NoSuchElementException:
@@ -113,45 +115,43 @@ class InventaireApi:
     def create_work(self, title, author, autosubmit=True):
         """Create a work (book)"""
         self.driver.get("https://inventaire.io/entity/new?type=work")
-        self.wait_until_loaded(By.CLASS_NAME, "column.svelte-1z0jooq")
+        self.wait_until_loaded(By.XPATH,
+                               "/html/body/div/main/div/div[3]/button/i")
         self.logger.info("Create work loaded")
 
-        _title = self.driver.find_element(By.XPATH,
-                                          "//input[@class='svelte-o6gvsq']")
+        _title = self.driver.find_element(
+            By.XPATH, "/html/body/div/main/div/div[2]/div/div/div[1]/input")
         _title.send_keys(title)
 
         _save_button = self.driver.find_element(
-            By.CLASS_NAME, 'tiny-button.save.svelte-1lv9oa')
+            By.XPATH,
+            '/html/body/div/main/div/div[2]/div/div/div[2]/button[1]')
         _save_button.click()
 
-        for elem in self.driver.find_elements(By.CLASS_NAME,
-                                              "editor-section.svelte-1j1ofcl"):
-            source = elem.get_attribute('innerHTML')
-            if "Autor" in source:
-                _author_button = elem.find_element(
-                    By.CLASS_NAME,
-                    'add-value.tiny-button.soft-grey.svelte-1j1ofcl')
-                _author_element = elem
-                break
-
-        _author_button.click()
-        _author_input = _author_element.find_element(
-            By.XPATH, "//input[@class='svelte-1u25yab']")
+        _add_author_button = self.driver.find_element(
+            By.XPATH, "/html/body/div/main/div/li[2]/div/button/i")
+        _add_author_button.click()
+        _author_input = self.driver.find_element(
+            By.XPATH,
+            "/html/body/div/main/div/li[2]/div/div/div[1]/div[1]/div/input")
         _author_input.send_keys(author)
 
-        self.wait_until_loaded(By.CLASS_NAME, 'svelte-dynnwx')
+        self.wait_until_loaded(By.XPATH,
+                               "//div[starts-with(@class,'autocomplete')]")
         self.logger.info("Author autocomplete loaded")
-
+        _author_element = self.driver.find_element(
+            By.XPATH, "/html/body/div/main/div/li[2]")
         _autocomplete = _author_element.find_element(
-            By.CLASS_NAME, 'autocomplete.svelte-1u25yab')
+            By.XPATH, "//div[starts-with(@class,'autocomplete')]")
         _author_found = False
 
         for auth in _autocomplete.find_elements(
-                By.XPATH, "//li[@class='svelte-dynnwx']"):
+                By.XPATH, "//li[starts-with(@class,'svelte')]"):
             _author_name = unidecode(
                 auth.find_element(
-                    By.CLASS_NAME,
-                    'label.svelte-dynnwx').get_attribute('innerHTML'))
+                    By.XPATH,
+                    "//span[starts-with(@class,'label')]").get_attribute(
+                        'innerHTML'))
             if _author_name in author:
                 _author_found = True
                 self.logger.info("Author %s found", author)
@@ -160,12 +160,13 @@ class InventaireApi:
 
         if not _author_found:
             self.logger.info("Author %s not found, creating...", author)
-            _autocomplete.find_element(By.CLASS_NAME,
-                                       'create.svelte-1u25yab').click()
+            _autocomplete.find_element(
+                By.XPATH, "//button[starts-with(@class,'create')]").click()
 
         self.logger.info("Author OK")
+        input()
         _submit_work_button = self.driver.find_element(
-            By.CLASS_NAME, 'light-blue-button.svelte-1z0jooq')
+            By.XPATH, '//*[@id="main"]/div/div[3]/button')
         if autosubmit:
             _submit_work_button.click()
         self.logger.info("Submitted")
