@@ -1,8 +1,9 @@
+"""Unnoficial Inventaire Api"""
+import logging
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-import bs4
-import logging
+from unidecode import unidecode
 
 logger = logging.getLogger('inventaire_api')
 logger.setLevel(logging.DEBUG)
@@ -14,29 +15,32 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 # Define a custom user agent
-my_user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36"
+MY_USER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36")
 # Set up Chrome options
 chrome_options = Options()
 # Set the custom User-Agent
-chrome_options.add_argument(f"--user-agent={my_user_agent}")
-chrome_options.add_argument(f"--lang=es")
+chrome_options.add_argument(f"--user-agent={MY_USER_AGENT}")
+chrome_options.add_argument("--lang=es")
 chrome_options.add_argument("--no-sandbox")
 # Create a new instance of ChromeDriver with the desired options
 driver = webdriver.Chrome(options=chrome_options)
 logger.info("Created Driver")
 
 
-def wait_until_loaded(by, selector):
+def wait_until_loaded(by_selector, selector):
+    """Wait unitl the desired element is loaded"""
     loaded = None
     while loaded is None:
         try:
-            loaded = driver.find_element(by, selector)
-        except:
+            loaded = driver.find_element(by_selector, selector)
+        except Exception:
             pass
     return True
 
 
 def login(user, password):
+    """Loggin into the inventaire web"""
     logger.info("Loggin..")
     driver.get("https://inventaire.io/login")
     wait_until_loaded(By.ID, 'username')
@@ -69,6 +73,7 @@ def login(user, password):
 
 
 def search_by_isbn(isbn):
+    """Find if a isbn exists in inventaire"""
     driver.get("https://inventaire.io")
     wait_until_loaded(By.XPATH, "//input[@class='svelte-qzi9hf']")
     logger.info("Search page loaded")
@@ -95,6 +100,7 @@ def search_by_isbn(isbn):
 
 
 def create_work(title, author):
+    """Create a work (book)"""
     driver.get("https://inventaire.io/entity/new?type=work")
     wait_until_loaded(By.CLASS_NAME, "column.svelte-1z0jooq")
     logger.info("Create work loaded")
@@ -122,22 +128,17 @@ def create_work(title, author):
     _author_found = False
     for auth in _autocomplete.find_elements(By.XPATH,
                                             "//li[@class='svelte-dynnwx']"):
-        _author_name = (auth.find_element(
+        _author_name = unidecode(auth.find_element(
             By.CLASS_NAME,
-            'label.svelte-dynnwx').get_attribute('innerHTML')).replace(
-                'á',
-                'a').replace('é',
-                             'e').replace('í',
-                                          'i').replace('ó',
-                                                       'o').replace('ú', 'u')
+            'label.svelte-dynnwx').get_attribute('innerHTML'))
         if _author_name in author:
             _author_found = True
-            logger.info(f"Author {author} found")
+            logger.info("Author %s found", author)
             auth.click()
             break
 
     if not _author_found:
-        loger.info(f"Author {author} not found, creating...")
+        logger.info("Author %s not found, creating...", author)
         _autocomplete.find_element(By.CLASS_NAME,
                                    'create.svelte-1u25yab').click()
     logger.info("Author OK")
@@ -146,4 +147,3 @@ def create_work(title, author):
     _submit_work_button.click()
     logger.info("Submited")
     return True
-
