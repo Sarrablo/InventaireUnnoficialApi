@@ -175,12 +175,27 @@ class InventaireApi:
     def create_edition(self, parent, isbn):
         """Create edition for an specified work"""
         self.driver.get(parent)
-        self.wait_until_loaded(By.XPATH, '/html/body/div/main/div/div[2]/div/div[1]/div[2]/div/div[1]/h5')
-        _add_edition_button=self.driver.find_element(By.XPATH, '/html/body/div/main/div/div[2]/div/div[1]/div[2]//button[starts-with(@class,"tiny-button")]')
+        self.wait_until_loaded(
+            By.XPATH,
+            '/html/body/div/main/div/div[2]/div/div[1]/div[2]/div/div[1]/h5')
+        self.logger.info("Adding %s edition", isbn)
+        _add_edition_button = self.driver.find_element(
+            By.XPATH,
+            ('/html/body/div/main/div/div[2]/div/div[1]/div[2]'
+            '//button[starts-with(@class,"tiny-button")]')
+        )
         _add_edition_button.click()
-        _edition_input = self.driver.find_element(By.XPATH, "/html/body/div/main/div/div[2]/div/div[1]/div[2]//input[starts-with(@class, 'has-alertbox enterClick')]")
+        _edition_input = self.driver.find_element(
+            By.XPATH,
+            ("/html/body/div/main/div/div[2]/div/div[1]/div[2]"
+                "//input[starts-with(@class, 'has-alertbox enterClick')]")
+        )
         _edition_input.send_keys(isbn)
-        _submit_add_edition = self.driver.find_element(By.XPATH, "/html/body/div/main/div/div[2]/div/div[1]/div[2]//button[starts-with(@class,'isbn-button')]")
+        _submit_add_edition = self.driver.find_element(
+            By.XPATH,
+            ("/html/body/div/main/div/div[2]/div/div[1]/div[2]"
+                "//button[starts-with(@class,'isbn-button')]")
+        )
         _submit_add_edition.click()
         addition_result = None
         while addition_result is None:
@@ -188,19 +203,23 @@ class InventaireApi:
             try:
                 addition_result = self.driver.find_element(
                     By.XPATH,
-                    '/html/body/div/main/div/div[2]/div/div[1]/div/div/div[1]/div[2]/div/div[2]//span[starts-with(@class, "property")]')
+                    ('/html/body/div/main/div/div[2]/div/div[1]/div/div'
+                        '/div[1]/div[2]/div/div[2]'
+                        '//span[starts-with(@class, "property")]')
+                )
                 self.logger.info("Adition Success")
                 return True
             except NoSuchElementException:
                 pass
             try:
                 addition_result = self.driver.find_element(
-                    By.XPATH, '/html/body/div/main/div/div[2]/div/div[1]/div[2]/div/div[2]/div[2]/div/i')
+                    By.XPATH,
+                    '//*[@id="main"]/div/div[2]/div/div[1]/div[2]/div/div[4]/div[2]/div/i'
+                )
                 self.logger.info("Adition Failed (Alredy exists)")
                 return False
             except NoSuchElementException:
                 pass
-
 
     def close(self):
         """Closing method"""
