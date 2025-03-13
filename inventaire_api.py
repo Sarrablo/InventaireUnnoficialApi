@@ -81,11 +81,11 @@ class InventaireApi:
     def search_by_isbn(self, isbn):
         """Find if a isbn exists in inventaire"""
         self.driver.get("https://inventaire.io")
-        self.wait_until_loaded(By.XPATH, "//input[@class='svelte-qzi9hf']")
+        self.wait_until_loaded(By.XPATH, "/html/body/div/div[1]/nav/div[1]/input")
         self.logger.info("Search page loaded")
 
         _search_input = self.driver.find_element(
-            By.XPATH, "//input[@class='svelte-qzi9hf']")
+            By.XPATH, "/html/body/div/div[1]/nav/div[1]/input")
         _search_input.send_keys(isbn)
 
         search_result = None
@@ -93,16 +93,16 @@ class InventaireApi:
             self.driver.implicitly_wait(1)
             try:
                 search_result = self.driver.find_element(
-                    By.CLASS_NAME, 'svelte-9gl3v7')
+                    By.XPATH, '/html/body/div/div[1]/nav/div[1]/div[1]/div[2]/ul/li')
                 self.logger.info("Search Success")
                 _search_link = search_result.find_element(
-                    By.XPATH, "//a[@class='svelte-9gl3v7']")
+                    By.XPATH, "a")
                 return _search_link.get_attribute('href')
             except NoSuchElementException:
                 pass
             try:
                 search_result = self.driver.find_element(
-                    By.CLASS_NAME, 'no-result.svelte-qzi9hf')
+                    By.XPATH, '/html/body/div/div[1]/nav/div[1]/div[1]/p')
                 self.logger.info("Search Failed")
                 return False
             except NoSuchElementException:
