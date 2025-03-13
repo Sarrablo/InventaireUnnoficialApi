@@ -8,7 +8,8 @@ This project was born out of the need to create a Python API to automate the pro
 Python dependencies
 
     selenium>=4.29.0
-    beautifulsoup4>=4.10.0
+    Unidecode>=1.3.8
+ 
     
 System dependecies:
 
