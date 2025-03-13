@@ -13,7 +13,8 @@ Although Inventaire does provide a native API, it’s not very intuitive or well
 - ✅ Login to Inventaire.io  
 - ✅ Search by ISBN  
 - ✅ Create new Work (Book)  
-- 🔜 Create Edition from a Work *(in progress)*  
+- ✅ Update edition from a Work  
+- 🔜 Edit edition (cover image, pages, etc) *(in progress)*  
 - 🔜 Add Edition to your Inventory *(planned)*  
 - 🔜 Manage your Inventory *(planned)*  
 - 🔜 Handle transactions *(planned)*
@@ -50,6 +51,7 @@ api = InventaireApi()
 
 if api.login("your_username", "your_password"):
     api.create_work("The Little Prince", "Antoine de Saint-Exupéry")
+    api.create_edition("inventaire work url", "edition isbn")
     result = api.search_by_isbn("9780156012195")
     print(f"Book found at: {result}")
 else:
@@ -65,7 +67,8 @@ api.close()
 - [x] Login to Inventaire.io  
 - [x] Search by ISBN  
 - [x] Create new Work (Book)  
-- [ ] Create Edition from Work  
+- [x] Create Edition from Work  
+- [ ] Update edition parameters  
 - [ ] Add Edition to Inventory  
 - [ ] Manage Inventory (update/delete)  
 - [ ] Manage Transactions
