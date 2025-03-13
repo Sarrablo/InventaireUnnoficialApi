@@ -51,8 +51,9 @@ class InventaireApi:
 
         _user = self.driver.find_element(By.ID, 'username')
         _pwd = self.driver.find_element(By.NAME, 'password')
-        _show_pwd = self.driver.find_element(By.CLASS_NAME,
-                                             'show-password.svelte-6g1eqi')
+        _show_pwd = self.driver.find_element(
+            By.XPATH,
+            '/html/body/div/main/div/div/form/div[2]/div/label/input')
         _submit_button = self.driver.find_element(By.ID, 'login')
 
         _user.send_keys(user)
@@ -65,14 +66,14 @@ class InventaireApi:
             self.driver.implicitly_wait(1)
             try:
                 logged = self.driver.find_element(
-                    By.CLASS_NAME, 'username.respect-case.svelte-19zdlyb')
+                    By.XPATH, '/html/body/div/main/div/div/div[2]/div[1]/div[1]/div[2]/h2')
                 self.logger.info("Login Success")
                 return True
             except NoSuchElementException:
                 pass
             try:
-                logged = self.driver.find_element(By.CLASS_NAME,
-                                                  'flash.error.svelte-btfyjl')
+                logged = self.driver.find_element(By.XPATH,
+                                                  '/html/body/div/main/div/div/form/div[3]/div/i')
                 self.logger.info("Login Failed")
                 return False
             except NoSuchElementException:
@@ -81,7 +82,8 @@ class InventaireApi:
     def search_by_isbn(self, isbn):
         """Find if a isbn exists in inventaire"""
         self.driver.get("https://inventaire.io")
-        self.wait_until_loaded(By.XPATH, "/html/body/div/div[1]/nav/div[1]/input")
+        self.wait_until_loaded(By.XPATH,
+                               "/html/body/div/div[1]/nav/div[1]/input")
         self.logger.info("Search page loaded")
 
         _search_input = self.driver.find_element(
@@ -93,10 +95,10 @@ class InventaireApi:
             self.driver.implicitly_wait(1)
             try:
                 search_result = self.driver.find_element(
-                    By.XPATH, '/html/body/div/div[1]/nav/div[1]/div[1]/div[2]/ul/li')
+                    By.XPATH,
+                    '/html/body/div/div[1]/nav/div[1]/div[1]/div[2]/ul/li')
                 self.logger.info("Search Success")
-                _search_link = search_result.find_element(
-                    By.XPATH, "a")
+                _search_link = search_result.find_element(By.XPATH, "a")
                 return _search_link.get_attribute('href')
             except NoSuchElementException:
                 pass
