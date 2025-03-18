@@ -54,6 +54,8 @@ if api.login("your_username", "your_password"):
     api.create_edition("inventaire work url", "edition isbn")
     result = api.search_by_isbn("9780156012195")
     print(f"Book found at: {result}")
+    edit_resul = api.edit_edition("your isbn", image="image url")
+    print(f"Book found at: {result}")
 else:
     print("Login failed")
 
@@ -68,7 +70,12 @@ api.close()
 - [x] Search by ISBN  
 - [x] Create new Work (Book)  
 - [x] Create Edition from Work  
-- [ ] Update edition parameters  
+- [ ] Udapte edition from work  
+  - [x] Update image  
+  - [ ] Update pages  
+  - [ ] Update date  
+  - [ ] Update publisher  
+  - [ ] Update collection 
 - [ ] Add Edition to Inventory  
 - [ ] Manage Inventory (update/delete)  
 - [ ] Manage Transactions
