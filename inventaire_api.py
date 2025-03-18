@@ -1,5 +1,6 @@
 """Inventaire unnoficial api"""
 import logging
+import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -180,22 +181,17 @@ class InventaireApi:
             '/html/body/div/main/div/div[2]/div/div[1]/div[2]/div/div[1]/h5')
         self.logger.info("Adding %s edition", isbn)
         _add_edition_button = self.driver.find_element(
-            By.XPATH,
-            ('/html/body/div/main/div/div[2]/div/div[1]/div[2]'
-            '//button[starts-with(@class,"tiny-button")]')
-        )
+            By.XPATH, ('/html/body/div/main/div/div[2]/div/div[1]/div[2]'
+                       '//button[starts-with(@class,"tiny-button")]'))
         _add_edition_button.click()
         _edition_input = self.driver.find_element(
             By.XPATH,
             ("/html/body/div/main/div/div[2]/div/div[1]/div[2]"
-                "//input[starts-with(@class, 'has-alertbox enterClick')]")
-        )
+             "//input[starts-with(@class, 'has-alertbox enterClick')]"))
         _edition_input.send_keys(isbn)
         _submit_add_edition = self.driver.find_element(
-            By.XPATH,
-            ("/html/body/div/main/div/div[2]/div/div[1]/div[2]"
-                "//button[starts-with(@class,'isbn-button')]")
-        )
+            By.XPATH, ("/html/body/div/main/div/div[2]/div/div[1]/div[2]"
+                       "//button[starts-with(@class,'isbn-button')]"))
         _submit_add_edition.click()
         addition_result = None
         while addition_result is None:
@@ -204,9 +200,8 @@ class InventaireApi:
                 addition_result = self.driver.find_element(
                     By.XPATH,
                     ('/html/body/div/main/div/div[2]/div/div[1]/div/div'
-                        '/div[1]/div[2]/div/div[2]'
-                        '//span[starts-with(@class, "property")]')
-                )
+                     '/div[1]/div[2]/div/div[2]'
+                     '//span[starts-with(@class, "property")]'))
                 self.logger.info("Adition Success")
                 return True
             except NoSuchElementException:
@@ -220,6 +215,58 @@ class InventaireApi:
                 return False
             except NoSuchElementException:
                 pass
+
+    def edit_edition(self,
+                     isbn,
+                     image=None,
+                     pages=None,
+                     publisher=None,
+                     collection=None,
+                     date=None):
+        """Add data to an edition"""
+        if not (_edition_url := self.search_by_isbn(isbn)):
+            self.logger.info("Edition %s not found, create first", isbn)
+            return False
+        self.driver.get(f"{_edition_url}/edit")
+        self.wait_until_loaded(
+            By.XPATH, "/html/body/div/main/div/ul/li[1]/div/div/div/button")
+        self.logger.info("Edit page for %s loaded", isbn)
+        #Add image
+        if image:
+            try:
+                #Find if the edition has not an image
+                _add_image_button = self.driver.find_element(
+                    By.XPATH,
+                    "/html/body/div/main/div/ul/li[6]/div/button/span")
+                _new_image = True
+            except NoSuchElementException:
+                #It has an image, edit it
+                _new_image = False
+                _add_image_button = self.driver.find_element(
+                    By.XPATH,
+                    "/html/body/div/main/div/ul/li[6]/div/div/div/div/button/i"
+                )
+            _add_image_button.click()
+            _image_input = self.driver.find_element(
+                By.XPATH,
+                "/html/body/div/main/div/ul/li[6]/div/div/div/div[1]/label[1]/input"
+            )
+            _image_input.send_keys(image)
+            if _new_image:
+                self.wait_until_loaded(
+                    By.XPATH,
+                    "/html/body/div/main/div/ul/li[6]/div/div/div/div[1]/div[2]/button[1]/i"
+                )
+            else:
+                #I dont like this solution but i dont know how to control the new load
+                time.sleep(2)
+            self.logger.info("Image loaded")
+            _save_image_btn = self.driver.find_element(
+                By.XPATH,
+                "/html/body/div/main/div/ul/li[6]/div/div/div/div[2]/button[1]"
+            )
+            _save_image_btn.click()
+            self.logger.info("Image saved")
 
     def close(self):
         """Closing method"""
