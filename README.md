@@ -62,6 +62,39 @@ else:
 api.close()
 ```
 
+### Available methods
+#### InventaireApi.login
+Parameters:
+```
+user: String - Username from inventaire
+password: String - Password from inventaire
+```
+
+Return True if succesfully login, false instead
+
+#### InventaireApi.search_by_isbn
+Parameters:
+```
+isbn: String - ISBN to search, in ISBN13 Format
+```
+
+#### InventaireApi.create_work
+Parameters:
+```
+title: String - Work Title
+author: String - Author Full name
+autosubmit: Boolean - (Optional, Default: True) Create the work, instead it only fill the fields
+```
+
+#### InventaireApi.create_edition
+Parameters:
+```
+parent: String - Work url to create the edition (example: "https://inventaire.io/entity/inv:b30491238f4a79a466c27418a2822cf6""
+isbn: String - Edition ISBN
+```
+
+  
+
 ---
 
 ## 🛣️ Roadmap
