@@ -105,7 +105,7 @@ isbn: String - Edition ISBN
 - [x] Create Edition from Work  
 - [ ] Udapte edition from work  
   - [x] Update image  
-  - [ ] Update pages  
+  - [x] Update pages  
   - [ ] Update date  
   - [ ] Update publisher  
   - [ ] Update collection 

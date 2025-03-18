@@ -165,7 +165,6 @@ class InventaireApi:
                 By.XPATH, "//button[starts-with(@class,'create')]").click()
 
         self.logger.info("Author OK")
-        input()
         _submit_work_button = self.driver.find_element(
             By.XPATH, '//*[@id="main"]/div/div[3]/button')
         if autosubmit:
@@ -267,6 +266,14 @@ class InventaireApi:
             )
             _save_image_btn.click()
             self.logger.info("Image saved")
+        if pages:
+            _pages_button = self.driver.find_element(By.XPATH, "/html/body/div/main/div/ul/li[14]/div/button/i")
+            _pages_button.click()
+            _pages_input = self.driver.find_element(By.XPATH, "/html/body/div/main/div/ul/li[14]/div/div/div/input")
+            _pages_input.send_keys(pages)
+            _save_pages_btn = self.driver.find_element(By.XPATH, "/html/body/div/main/div/ul/li[14]/div/div/div/div/button[1]")
+            _save_pages_btn.click()
+            self.logger.info("Pages saved")
 
     def close(self):
         """Closing method"""
