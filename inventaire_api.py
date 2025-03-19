@@ -266,12 +266,37 @@ class InventaireApi:
             )
             _save_image_btn.click()
             self.logger.info("Image saved")
+        if date:
+            _date_button = self.driver.find_element(By.XPATH, 
+                    "/html/body/div/main/div/ul/li[11]/div/div/div/div/button"
+                    )
+            _date_button.click()
+            _year_input = self.driver.find_element(By.XPATH, '//*[@id="component24-year"]')
+            _year_input.clear()
+            _year_input.send_keys(date.year)
+            try:
+                _month_button = self.driver.find_element(By.XPATH, "/html/body/div/main/div/ul/li[11]/div/div/div/div[1]/div[2]/button[1]")
+                _month_button.click()
+            except NoSuchElementException:
+                pass
+            _month_input = self.driver.find_element(By.XPATH, '//*[@id="component24-month"]')
+            _month_input.clear()
+            _month_input.send_keys(date.month)
+            _save_date_btn = self.driver.find_element(By.XPATH, "/html/body/div/main/div/ul/li[11]/div/div/div/div[2]/button[1]")
+            _save_date_btn.click()
+
         if pages:
-            _pages_button = self.driver.find_element(By.XPATH, "/html/body/div/main/div/ul/li[14]/div/button/i")
+            _pages_button = self.driver.find_element(
+                By.XPATH, "/html/body/div/main/div/ul/li[14]/div/div/div/div/button/i")
             _pages_button.click()
-            _pages_input = self.driver.find_element(By.XPATH, "/html/body/div/main/div/ul/li[14]/div/div/div/input")
+            _pages_input = self.driver.find_element(
+                By.XPATH,
+                "/html/body/div/main/div/ul/li[14]/div/div/div/input")
+            _pages_input.clear()
             _pages_input.send_keys(pages)
-            _save_pages_btn = self.driver.find_element(By.XPATH, "/html/body/div/main/div/ul/li[14]/div/div/div/div/button[1]")
+            _save_pages_btn = self.driver.find_element(
+                By.XPATH,
+                "/html/body/div/main/div/ul/li[14]/div/div/div/div/button[1]")
             _save_pages_btn.click()
             self.logger.info("Pages saved")
 

@@ -106,7 +106,7 @@ isbn: String - Edition ISBN
 - [ ] Udapte edition from work  
   - [x] Update image  
   - [x] Update pages  
-  - [ ] Update date  
+  - [x] Update date  
   - [ ] Update publisher  
   - [ ] Update collection 
 - [ ] Add Edition to Inventory  
