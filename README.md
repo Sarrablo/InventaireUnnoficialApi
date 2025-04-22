@@ -107,7 +107,7 @@ isbn: String - Edition ISBN
   - [x] Update image  
   - [x] Update pages  
   - [x] Update date  
-  - [ ] Update publisher  
+  - [x] Update publisher  
   - [ ] Update collection 
 - [ ] Add Edition to Inventory  
 - [ ] Manage Inventory (update/delete)  
