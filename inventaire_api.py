@@ -267,27 +267,36 @@ class InventaireApi:
             _save_image_btn.click()
             self.logger.info("Image saved")
         if date:
-            _date_button = self.driver.find_element(By.XPATH, 
-                    "/html/body/div/main/div/ul/li[11]/div/div/div/div/button"
-                    )
+            _date_button = self.driver.find_element(
+                By.XPATH,
+                "/html/body/div/main/div/ul/li[11]/div/div/div/div/button")
             _date_button.click()
-            _year_input = self.driver.find_element(By.XPATH, '//*[@id="component24-year"]')
+            _year_input = self.driver.find_element(
+                By.XPATH, '//*[@id="component24-year"]')
             _year_input.clear()
             _year_input.send_keys(date.year)
             try:
-                _month_button = self.driver.find_element(By.XPATH, "/html/body/div/main/div/ul/li[11]/div/div/div/div[1]/div[2]/button[1]")
+                _month_button = self.driver.find_element(
+                    By.XPATH,
+                    "/html/body/div/main/div/ul/li[11]/div/div/div/div[1]/div[2]/button[1]"
+                )
                 _month_button.click()
             except NoSuchElementException:
                 pass
-            _month_input = self.driver.find_element(By.XPATH, '//*[@id="component24-month"]')
+            _month_input = self.driver.find_element(
+                By.XPATH, '//*[@id="component24-month"]')
             _month_input.clear()
             _month_input.send_keys(date.month)
-            _save_date_btn = self.driver.find_element(By.XPATH, "/html/body/div/main/div/ul/li[11]/div/div/div/div[2]/button[1]")
+            _save_date_btn = self.driver.find_element(
+                By.XPATH,
+                "/html/body/div/main/div/ul/li[11]/div/div/div/div[2]/button[1]"
+            )
             _save_date_btn.click()
 
         if pages:
             _pages_button = self.driver.find_element(
-                By.XPATH, "/html/body/div/main/div/ul/li[14]/div/div/div/div/button/i")
+                By.XPATH,
+                "/html/body/div/main/div/ul/li[14]/div/div/div/div/button/i")
             _pages_button.click()
             _pages_input = self.driver.find_element(
                 By.XPATH,
@@ -299,6 +308,47 @@ class InventaireApi:
                 "/html/body/div/main/div/ul/li[14]/div/div/div/div/button[1]")
             _save_pages_btn.click()
             self.logger.info("Pages saved")
+        if publisher:
+            _publisher_button = self.driver.find_element(
+                By.XPATH, "/html/body/div/main/div/ul/li[7]/div/button/i")
+            _publisher_button.click()
+            _publisher_input = self.driver.find_element(
+                By.XPATH,
+                "/html/body/div/main/div/ul/li[7]/div/div/div/div[1]/div/input"
+            )
+            _publisher_input.clear()
+            _publisher_input.send_keys(publisher)
+            _publisher_element = self.driver.find_element(
+                By.XPATH, "/html/body/div/main/div/ul/li[7]")
+            self.driver.implicitly_wait(1)
+
+            _autocomplete = _publisher_element.find_element(
+                By.XPATH, "//div[starts-with(@class,'autocomplete')]")
+
+            _publisher_found = False
+
+            self.driver.implicitly_wait(2)
+            for _publis in _autocomplete.find_elements(
+                    By.XPATH, "//li[starts-with(@class,'svelte')]"):
+                _publisher_name = unidecode(
+                    _publis.find_element(
+                        By.XPATH,
+                        ".//span[starts-with(@class,'label')]").get_attribute(
+                            'innerHTML'))
+                if _publisher_name in publisher:
+                    _publisher_found = True
+                    self.logger.info("Publisher %s found", publisher)
+                    _publis.click()
+                    break
+
+            if not _publisher_found:
+                self.logger.info("Publisher %s not found, creating...",
+                                 publisher)
+                _autocomplete.find_element(
+                    By.XPATH,
+                    "//button[starts-with(@class,'create')]").click()
+
+            input()
 
     def close(self):
         """Closing method"""
